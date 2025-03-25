@@ -1,0 +1,142 @@
+.results-panel {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background-color: #f5f5f5;
+}
+
+.tab.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.tab-content {
+  padding: 20px;
+}
+
+/* Premium Tab Styles */
+.premium-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.premium-box {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+
+.premium-box h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.premium-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4a90e2;
+}
+
+.greeks-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.greeks-container h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+.greeks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.greek-item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.greek-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.greek-value {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.greeks-explanation {
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  margin-top: 15px;
+}
+
+.greeks-explanation p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Chart Tab Styles */
+.chart-tab {
+  height: 100%;
+}
+
+.chart-tab h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+.chart-description {
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.chart-container {
+  height: 400px;
+  width: 100%;
+}
