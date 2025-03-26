@@ -33,20 +33,25 @@
   max-width: 1200px;
   margin: 0 auto;
   gap: 30px;
+  align-items: flex-start;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .App-container {
     flex-direction: column;
+    gap: 20px;
   }
 }
 
 .left-panel {
-  flex: 0 0 300px;
+  flex: 0 0 320px;
+  position: sticky;
+  top: 20px;
 }
 
 .right-panel {
   flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
 }
 
 .App-footer {
