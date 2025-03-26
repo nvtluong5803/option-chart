@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './ResultsPanel.css';
 
-const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaUnderlyingData }) => {
+const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaUnderlyingData, parameters }) => {
   const [activeTab, setActiveTab] = useState('premium');
 
   // Generate colors for chart lines
@@ -11,6 +11,24 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
     const hue = 240 - (index / (total - 1)) * 240;
     return `hsl(${hue}, 80%, 50%)`;
   };
+
+  // Function to calculate d1 and d2 for formula display
+  const calculateD1D2 = () => {
+    const { optionType, underlyingPrice, strikePrice, timeToMaturity, volatility, riskFreeRate } = parameters;
+    const S = underlyingPrice;
+    const K = strikePrice;
+    const r = riskFreeRate;
+    const T = timeToMaturity;
+    const sigma = volatility;
+    
+    const d1 = (Math.log(S / K) + (r + sigma * sigma / 2) * T) / (sigma * Math.sqrt(T));
+    const d2 = d1 - sigma * Math.sqrt(T);
+    
+    return { d1, d2 };
+  };
+
+  // Calculate d1 and d2 for the formula display
+  const { d1, d2 } = calculateD1D2();
 
   return (
     <div className="results-panel">
@@ -32,6 +50,12 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           onClick={() => setActiveTab('delta')}
         >
           Delta vs. Underlying
+        </button>
+        <button 
+          className={`tab ${activeTab === 'formula' ? 'active' : ''}`}
+          onClick={() => setActiveTab('formula')}
+        >
+          Black-Scholes Formula
         </button>
       </div>
 
@@ -163,6 +187,86 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
                   ))}
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'formula' && (
+          <div className="formula-tab">
+            <h3>Black-Scholes Option Pricing Formula</h3>
+            
+            <div className="formula-container">
+              <div className="formula-section">
+                <h4>Call Option Price:</h4>
+                <div className="formula">
+                  C = S × N(d₁) - K × e<sup>-rT</sup> × N(d₂)
+                </div>
+                <div className="formula-calculation">
+                  C = {parameters.underlyingPrice.toFixed(2)} × N({d1.toFixed(4)}) - {parameters.strikePrice.toFixed(2)} × e<sup>-{parameters.riskFreeRate.toFixed(2)}×{parameters.timeToMaturity.toFixed(2)}</sup> × N({d2.toFixed(4)})
+                </div>
+              </div>
+              
+              <div className="formula-section">
+                <h4>Put Option Price:</h4>
+                <div className="formula">
+                  P = K × e<sup>-rT</sup> × N(-d₂) - S × N(-d₁)
+                </div>
+                <div className="formula-calculation">
+                  P = {parameters.strikePrice.toFixed(2)} × e<sup>-{parameters.riskFreeRate.toFixed(2)}×{parameters.timeToMaturity.toFixed(2)}</sup> × N({(-d2).toFixed(4)}) - {parameters.underlyingPrice.toFixed(2)} × N({(-d1).toFixed(4)})
+                </div>
+              </div>
+              
+              <div className="formula-section">
+                <h4>Where:</h4>
+                <div className="formula">
+                  d₁ = [ln(S/K) + (r + σ²/2)T] / (σ√T)
+                </div>
+                <div className="formula-calculation">
+                  d₁ = [ln({parameters.underlyingPrice.toFixed(2)}/{parameters.strikePrice.toFixed(2)}) + ({parameters.riskFreeRate.toFixed(2)} + {parameters.volatility.toFixed(2)}²/2) × {parameters.timeToMaturity.toFixed(2)}] / ({parameters.volatility.toFixed(2)} × √{parameters.timeToMaturity.toFixed(2)}) = {d1.toFixed(4)}
+                </div>
+                
+                <div className="formula">
+                  d₂ = d₁ - σ√T
+                </div>
+                <div className="formula-calculation">
+                  d₂ = {d1.toFixed(4)} - {parameters.volatility.toFixed(2)} × √{parameters.timeToMaturity.toFixed(2)} = {d2.toFixed(4)}
+                </div>
+              </div>
+              
+              <div className="formula-section">
+                <h4>Parameters:</h4>
+                <ul className="parameter-list">
+                  <li><strong>S = {parameters.underlyingPrice.toFixed(2)}</strong>: Current underlying price</li>
+                  <li><strong>K = {parameters.strikePrice.toFixed(2)}</strong>: Strike price</li>
+                  <li><strong>r = {parameters.riskFreeRate.toFixed(2)}</strong>: Risk-free interest rate (decimal form)</li>
+                  <li><strong>T = {parameters.timeToMaturity.toFixed(2)}</strong>: Time to maturity (in years)</li>
+                  <li><strong>σ = {parameters.volatility.toFixed(2)}</strong>: Volatility of the underlying asset (decimal form)</li>
+                  <li><strong>N(x)</strong>: Cumulative distribution function of the standard normal distribution</li>
+                </ul>
+              </div>
+              
+              <div className="formula-section">
+                <h4>Terms Explained:</h4>
+                <ul className="terms-explanation">
+                  <li><strong>N(d₁)</strong>: Represents the delta of the call option, which is the sensitivity of the option price to changes in the underlying price</li>
+                  <li><strong>N(d₂)</strong>: Represents the probability that the option will be exercised at maturity (in a risk-neutral world)</li>
+                  <li><strong>S × N(d₁)</strong>: The expected value of receiving the stock if the option expires in-the-money</li>
+                  <li><strong>K × e<sup>-rT</sup> × N(d₂)</strong>: The expected value of paying the strike price if the option expires in-the-money</li>
+                  <li><strong>e<sup>-rT</sup></strong>: The present value factor that discounts the strike price from the future to the present</li>
+                </ul>
+              </div>
+              
+              <div className="formula-section">
+                <h4>Greeks in Terms of the Formula:</h4>
+                <ul className="greeks-formula">
+                  <li><strong>Delta (Δ)</strong>: N(d₁) for a call option, N(d₁) - 1 for a put option</li>
+                  <li><strong>Gamma (Γ)</strong>: N'(d₁) / (S × σ × √T) (same for both call and put)</li>
+                  <li><strong>Theta (Θ)</strong>: -[S × N'(d₁) × σ / (2 × √T)] - r × K × e<sup>-rT</sup> × N(d₂) for a call</li>
+                  <li><strong>Vega (ν)</strong>: S × √T × N'(d₁) (same for both call and put)</li>
+                  <li><strong>Rho (ρ)</strong>: K × T × e<sup>-rT</sup> × N(d₂) for a call, -K × T × e<sup>-rT</sup> × N(-d₂) for a put</li>
+                </ul>
+                <p><em>Note: N'(x) is the probability density function of the standard normal distribution</em></p>
+              </div>
             </div>
           </div>
         )}

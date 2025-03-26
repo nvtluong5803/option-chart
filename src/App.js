@@ -129,6 +129,7 @@ function App() {
               priceChartData={priceChartData}
               volatilityChartData={volatilityChartData}
               deltaUnderlyingData={deltaUnderlyingData}
+              parameters={parameters}
             />
           </div>
         </div>
