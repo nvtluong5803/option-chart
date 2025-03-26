@@ -111,7 +111,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>European Option Calculator</h1>
+        <h1>Option Charts</h1>
         <p>Black-Scholes Model</p>
       </header>
       <main className="App-main">
@@ -135,7 +135,7 @@ function App() {
         </div>
       </main>
       <footer className="App-footer">
-        <p> {new Date().getFullYear()} European Option Calculator</p>
+        <p> {new Date().getFullYear()} Option Charts</p>
       </footer>
     </div>
   );

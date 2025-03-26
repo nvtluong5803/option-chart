@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import NormalDistribution from './NormalDistribution';
 import BrownianMotion from './BrownianMotion';
+import DeltaTangentChart from './DeltaTangentChart';
+import DeltaApproximationChart from './DeltaApproximationChart';
 import './ResultsPanel.css';
 
 const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaUnderlyingData, parameters }) => {
@@ -52,6 +54,18 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           onClick={() => setActiveTab('delta')}
         >
           Delta vs. Underlying
+        </button>
+        <button 
+          className={`tab ${activeTab === 'deltaTangent' ? 'active' : ''}`}
+          onClick={() => setActiveTab('deltaTangent')}
+        >
+          Delta Tangent
+        </button>
+        <button 
+          className={`tab ${activeTab === 'deltaApproximation' ? 'active' : ''}`}
+          onClick={() => setActiveTab('deltaApproximation')}
+        >
+          Delta Approximation
         </button>
         <button 
           className={`tab ${activeTab === 'formula' ? 'active' : ''}`}
@@ -202,6 +216,20 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
                 </LineChart>
               </ResponsiveContainer>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'deltaTangent' && (
+          <div className="chart-tab">
+            <h3>Delta Tangent</h3>
+            <DeltaTangentChart priceChartData={volatilityChartData} parameters={parameters} />
+          </div>
+        )}
+
+        {activeTab === 'deltaApproximation' && (
+          <div className="chart-tab">
+            <h3>Delta Approximation</h3>
+            <DeltaApproximationChart parameters={parameters} />
           </div>
         )}
 
