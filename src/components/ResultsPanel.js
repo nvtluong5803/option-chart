@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import NormalDistribution from './NormalDistribution';
+import BrownianMotion from './BrownianMotion';
 import './ResultsPanel.css';
 
 const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaUnderlyingData, parameters }) => {
@@ -40,10 +42,10 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           Option Premium & Greeks
         </button>
         <button 
-          className={`tab ${activeTab === 'chart' ? 'active' : ''}`}
-          onClick={() => setActiveTab('chart')}
+          className={`tab ${activeTab === 'price' ? 'active' : ''}`}
+          onClick={() => setActiveTab('price')}
         >
-          Price vs. Volatility Chart
+          Price vs. Underlying
         </button>
         <button 
           className={`tab ${activeTab === 'delta' ? 'active' : ''}`}
@@ -56,6 +58,18 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           onClick={() => setActiveTab('formula')}
         >
           Black-Scholes Formula
+        </button>
+        <button 
+          className={`tab ${activeTab === 'normal' ? 'active' : ''}`}
+          onClick={() => setActiveTab('normal')}
+        >
+          Normal Distribution
+        </button>
+        <button 
+          className={`tab ${activeTab === 'brownian' ? 'active' : ''}`}
+          onClick={() => setActiveTab('brownian')}
+        >
+          Brownian Motion
         </button>
       </div>
 
@@ -102,7 +116,7 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           </div>
         )}
 
-        {activeTab === 'chart' && (
+        {activeTab === 'price' && (
           <div className="chart-tab">
             <h3>Option Price vs. Underlying Price for Different Volatilities</h3>
             <div className="chart-container">
@@ -269,6 +283,14 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'normal' && (
+          <NormalDistribution />
+        )}
+        
+        {activeTab === 'brownian' && (
+          <BrownianMotion />
         )}
       </div>
     </div>
