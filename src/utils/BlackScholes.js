@@ -221,3 +221,56 @@ export const generateDeltaVolatilityData = (
   
   return data;
 };
+
+/**
+ * Generate data for delta vs underlying price chart with varying volatilities
+ * @param {string} type - Option type ('call' or 'put')
+ * @param {number} S - Current stock price
+ * @param {number} K - Strike price
+ * @param {number} r - Risk-free interest rate (decimal form)
+ * @param {number} T - Time to maturity (in years)
+ * @param {number} minVol - Minimum volatility (decimal form)
+ * @param {number} maxVol - Maximum volatility (decimal form)
+ * @param {number} volStep - Volatility step size (decimal form)
+ * @param {number} range - Range percentage around strike price
+ * @param {number} points - Number of data points to generate
+ * @returns {Array} Array of data series for the chart
+ */
+export const generateDeltaUnderlyingData = (
+  type, S, K, r, T, 
+  minVol = 0.1, maxVol = 0.9, volStep = 0.1,
+  range = 0.8, points = 50
+) => {
+  // Use strike price as reference for range calculation
+  const minPrice = K * (1 - range);
+  const maxPrice = K * (1 + range);
+  const priceStep = (maxPrice - minPrice) / (points - 1);
+  
+  const allData = [];
+  
+  // Generate price points for x-axis
+  const prices = [];
+  for (let price = minPrice; price <= maxPrice; price += priceStep) {
+    prices.push(price);
+  }
+  
+  // Generate series for each volatility
+  for (let vol = minVol; vol <= maxVol + 0.0001; vol += volStep) {
+    const roundedVol = Math.round(vol * 100) / 100; // Round to 2 decimal places
+    const seriesData = prices.map(price => {
+      const greeks = calculateGreeks(type, price, K, r, T, roundedVol);
+      return {
+        underlyingPrice: price,
+        delta: greeks.delta,
+        volatility: roundedVol
+      };
+    });
+    
+    allData.push({
+      volatility: roundedVol,
+      data: seriesData
+    });
+  }
+  
+  return allData;
+};

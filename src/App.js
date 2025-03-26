@@ -7,7 +7,7 @@ import {
   calculateGreeks, 
   generatePriceChartData,
   generateVolatilityChartData,
-  generateDeltaVolatilityData
+  generateDeltaUnderlyingData
 } from './utils/BlackScholes';
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
   });
   const [priceChartData, setPriceChartData] = useState([]);
   const [volatilityChartData, setVolatilityChartData] = useState([]);
-  const [deltaVolatilityData, setDeltaVolatilityData] = useState([]);
+  const [deltaUnderlyingData, setDeltaUnderlyingData] = useState([]);
 
   // Update calculations when parameters change
   useEffect(() => {
@@ -85,17 +85,19 @@ function App() {
     );
     setVolatilityChartData(volChartData);
     
-    // Generate delta vs volatility data (at-the-money)
-    const deltaVolData = generateDeltaVolatilityData(
+    // Generate delta vs underlying price data
+    const deltaData = generateDeltaUnderlyingData(
       optionType,
+      underlyingPrice,
       strikePrice,
       riskFreeRate,
       timeToMaturity,
-      0.05, // Min volatility (5%)
-      1.0,  // Max volatility (100%)
-      0.01  // Step size (1%)
+      0.1, // Min volatility (10%)
+      0.9, // Max volatility (90%)
+      0.1, // Step size (10%)
+      0.8  // Range: 80% below and above strike price
     );
-    setDeltaVolatilityData(deltaVolData);
+    setDeltaUnderlyingData(deltaData);
   }, [parameters]);
 
   // Handle parameter changes
@@ -126,7 +128,7 @@ function App() {
               greeks={greeks}
               priceChartData={priceChartData}
               volatilityChartData={volatilityChartData}
-              deltaVolatilityData={deltaVolatilityData}
+              deltaUnderlyingData={deltaUnderlyingData}
             />
           </div>
         </div>

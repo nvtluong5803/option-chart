@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './ResultsPanel.css';
 
-const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaVolatilityData }) => {
+const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData, deltaUnderlyingData }) => {
   const [activeTab, setActiveTab] = useState('premium');
 
-  // Generate colors for volatility chart lines
+  // Generate colors for chart lines
   const getLineColor = (index, total) => {
     // Color gradient from blue to red
     const hue = 240 - (index / (total - 1)) * 240;
@@ -31,7 +31,7 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
           className={`tab ${activeTab === 'delta' ? 'active' : ''}`}
           onClick={() => setActiveTab('delta')}
         >
-          Delta vs. Volatility
+          Delta vs. Underlying
         </button>
       </div>
 
@@ -124,23 +124,19 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
 
         {activeTab === 'delta' && (
           <div className="chart-tab">
-            <h3>Delta vs. Volatility (At-the-Money)</h3>
-            <p className="chart-description">
-              This chart shows how Delta changes with volatility when the underlying price equals the strike price.
-            </p>
+            <h3>Delta vs. Underlying Price for Different Volatilities</h3>
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart
-                  data={deltaVolatilityData}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
-                    dataKey="volatility" 
+                    dataKey="underlyingPrice" 
                     type="number" 
                     domain={['dataMin', 'dataMax']} 
-                    tickFormatter={(value) => `${value.toFixed(0)}%`}
-                    label={{ value: 'Volatility (%)', position: 'insideBottom', offset: -5 }}
+                    tickFormatter={(value) => `$${value.toFixed(0)}`}
+                    label={{ value: 'Underlying Price ($)', position: 'insideBottom', offset: -5 }}
                   />
                   <YAxis 
                     domain={[0, 1]}
@@ -149,17 +145,22 @@ const ResultsPanel = ({ optionPrice, greeks, priceChartData, volatilityChartData
                   />
                   <Tooltip 
                     formatter={(value) => [value.toFixed(4), 'Delta']}
-                    labelFormatter={(value) => `Volatility: ${value.toFixed(1)}%`}
+                    labelFormatter={(value) => `Underlying Price: $${value.toFixed(2)}`}
                   />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="delta"
-                    name="Delta"
-                    stroke="#8884d8"
-                    dot={false}
-                    activeDot={{ r: 6 }}
-                  />
+                  
+                  {deltaUnderlyingData.map((series, index) => (
+                    <Line
+                      key={`vol-${series.volatility}`}
+                      data={series.data}
+                      type="monotone"
+                      dataKey="delta"
+                      name={`Volatility: ${(series.volatility * 100).toFixed(0)}%`}
+                      stroke={getLineColor(index, deltaUnderlyingData.length)}
+                      dot={false}
+                      activeDot={{ r: 6 }}
+                    />
+                  ))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
