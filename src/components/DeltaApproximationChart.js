@@ -151,7 +151,7 @@ const DeltaApproximationChart = ({ parameters }) => {
     
     // For better visualization, we'll create a larger triangle
     // We'll scale up the size but maintain the same slope
-    const scale = 50; // Much larger scale for better visibility
+    const scale = 60; // Even larger scale for better visibility
     
     // Center the triangle on the selected point
     const baseX = selectedPoint.underlyingPrice;
@@ -167,22 +167,15 @@ const DeltaApproximationChart = ({ parameters }) => {
     return (
       <>
         {/* Fill triangle area */}
-        <Line
-          data={[
-            { underlyingPrice: triangleData[0].x, optionPrice: triangleData[0].y },
-            { underlyingPrice: triangleData[1].x, optionPrice: triangleData[1].y },
-            { underlyingPrice: triangleData[2].x, optionPrice: triangleData[2].y },
-            { underlyingPrice: triangleData[0].x, optionPrice: triangleData[0].y }
+        <Polygon
+          points={[
+            { x: triangleData[0].x, y: triangleData[0].y },
+            { x: triangleData[1].x, y: triangleData[1].y },
+            { x: triangleData[2].x, y: triangleData[2].y }
           ]}
-          dataKey="optionPrice"
-          name="Triangle Fill"
+          fill="rgba(255, 51, 0, 0.3)"
           stroke="#FF3300"
           strokeWidth={3}
-          fill="rgba(255, 51, 0, 0.25)"
-          type="linear"
-          dot={false}
-          isAnimationActive={false}
-          className="triangle-fill"
         />
       
         {/* Horizontal line (run) */}
@@ -298,28 +291,18 @@ const DeltaApproximationChart = ({ parameters }) => {
   // Calculate domain for zoomed view
   const getChartDomain = () => {
     if (zoomedView && selectedPoint) {
-      // Create a zoomed view around the selected point
-      const zoomRange = 0.5; // Much smaller range to zoom in more (previously 1.5)
-      const xMin = selectedPoint.underlyingPrice - zoomRange;
-      const xMax = selectedPoint.underlyingPrice + zoomRange;
+      // Fixed range of +/- 5 around the selected point
+      const xMin = selectedPoint.underlyingPrice - 5;
+      const xMax = selectedPoint.underlyingPrice + 5;
       
-      // Find the y values within this x range
-      const pointsInRange = chartData.filter(p => 
-        p.underlyingPrice >= xMin && p.underlyingPrice <= xMax
-      );
+      // Fixed range for y-axis, with minimum of 0
+      const yMin = Math.max(0, selectedPoint.optionPrice - 5);
+      const yMax = selectedPoint.optionPrice + 5;
       
-      if (pointsInRange.length > 0) {
-        const yValues = pointsInRange.map(p => p.optionPrice);
-        // Add some padding to y range for better visualization
-        const yPadding = 0.15; // 15% padding
-        const yMin = Math.max(0, Math.min(...yValues) * (1 - yPadding));
-        const yMax = Math.max(...yValues) * (1 + yPadding);
-        
-        return {
-          xDomain: [xMin, xMax],
-          yDomain: [yMin, yMax]
-        };
-      }
+      return {
+        xDomain: [xMin, xMax],
+        yDomain: [yMin, yMax]
+      };
     }
     
     // Default domain (full view)
@@ -358,7 +341,7 @@ const DeltaApproximationChart = ({ parameters }) => {
         <ResponsiveContainer width="100%" height={400}>
           <LineChart
             data={chartData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 15, right: 40, left: 20, bottom: 15 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
@@ -379,9 +362,6 @@ const DeltaApproximationChart = ({ parameters }) => {
             />
             <Legend />
             
-            {/* Rise over run visualization - render BEFORE the curve for proper z-ordering */}
-            {selectedPoint && zoomedView && createRiseOverRunVisual()}
-            
             {/* Option price curve */}
             <Line
               type="monotone"
@@ -392,6 +372,9 @@ const DeltaApproximationChart = ({ parameters }) => {
               dot={false}
               isAnimationActive={false}
             />
+            
+            {/* Rise over run visualization - Properly placed to be visible */}
+            {selectedPoint && zoomedView && createRiseOverRunVisual()}
             
             {/* Render delta points manually */}
             {deltaPoints.map((point, index) => {
@@ -408,7 +391,7 @@ const DeltaApproximationChart = ({ parameters }) => {
                   isAnimationActive={false}
                   dot={{
                     r: isSelected && zoomedView ? 4 : 8, // Smaller dot when selected
-                    fill: isSelected ? 'rgba(255, 0, 0, 0.5)' : '#ff7300', // Make selected dot semi-transparent
+                    fill: isSelected ? 'rgba(255, 0, 0, 0.3)' : '#ff7300', // Make selected dot more transparent
                     strokeWidth: isSelected ? 1 : 2,
                     stroke: '#ffffff',
                     cursor: 'pointer',
