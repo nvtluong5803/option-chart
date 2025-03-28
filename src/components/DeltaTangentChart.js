@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, Legend, ResponsiveContainer, ReferenceLine
+  Legend, ResponsiveContainer, ReferenceLine
 } from 'recharts';
 import { calculateGreeks, calculateOptionPrice } from '../utils/BlackScholes';
 import './DeltaTangentChart.css';
@@ -164,11 +164,7 @@ const DeltaTangentChart = ({ priceChartData, parameters }) => {
             <YAxis 
               tickFormatter={(value) => `$${value.toFixed(2)}`}
               label={{ value: 'Option Price ($)', angle: -90, position: 'insideLeft' }}
-            />
-            <Tooltip 
-              formatter={formatTooltip}
-              labelFormatter={labelFormatter}
-              isAnimationActive={false}
+              domain={[-30, 'auto']}
             />
             <Legend />
             
