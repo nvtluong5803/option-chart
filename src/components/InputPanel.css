@@ -4,9 +4,10 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
+  max-width: 300px;
   margin-right: 20px;
   height: fit-content;
+  box-sizing: border-box;
 }
 
 .input-panel h2 {
@@ -19,6 +20,7 @@
 
 .input-group {
   margin-bottom: 15px;
+  box-sizing: border-box;
 }
 
 .input-group label {
@@ -31,11 +33,12 @@
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
 .input-group input:focus,
