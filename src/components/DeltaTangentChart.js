@@ -194,6 +194,19 @@ const DeltaTangentChart = ({ priceChartData, parameters }) => {
                 isAnimationActive={false}
               />
             )}
+
+            {/* Horizontal reference line through current point */}
+            {hoverPoint && (
+              <ReferenceLine
+                y={hoverPoint.optionPrice}
+                stroke="#82ca9d"
+                strokeDasharray="3 3"
+                label={{
+                  value: `$${hoverPoint.optionPrice.toFixed(2)}`,
+                  position: 'right'
+                }}
+              />
+            )}
             
             {/* Strike price reference line */}
             {parameters && parameters.strikePrice && (
